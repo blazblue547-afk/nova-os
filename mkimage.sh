@@ -5,7 +5,7 @@
 set -e
 
 NOVA_ROOT="/home/joe/nova-os"
-IMAGE="$NOVA_ROOT/nova-os-4.0-bootstrap.img"
+IMAGE="$NOVA_ROOT/nova-os-4.1-ssh.img"
 SIZE_MB=1536  # 1.5 GB
 TMP_MNT="/tmp/nova-os-mnt"
 
