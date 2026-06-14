@@ -35,12 +35,16 @@ A 100% from-source Linux distribution. Every binary on this image was compiled o
 
 ```bash
 # Flash to SD card
-sudo dd if=nova-os-4.1-ssh.img of=/dev/mmcblk0 bs=4M status=progress
+sudo dd if=nova-os-4.2-firstboot.img of=/dev/mmcblk0 bs=4M status=progress
 
-# Boot your Pi 5 — OpenSSH starts automatically
-# SSH in:
+# Boot your Pi 5 — first-boot setup runs automatically:
+# • Root partition expands to fill your SD card
+# • Fresh SSH host keys are generated
+# • Root password is expired (must change on first login)
+
+# After first boot completes (it reboots once):
 ssh root@<pi-ip>
-# Password: nova
+# You'll be forced to change the password from 'nova'
 ```
 
 ## Services at Boot
@@ -50,6 +54,7 @@ ssh root@<pi-ip>
 | systemd-networkd | enabled | DHCP networking |
 | systemd-resolved | enabled | DNS resolution |
 | sshd | enabled | OpenSSH server, port 22 |
+| nova-firstboot | enabled | First-boot setup (runs once) |
 | nova-splash | enabled | Boot banner on tty1 |
 
 ## Build from Source
@@ -57,7 +62,7 @@ ssh root@<pi-ip>
 ```bash
 sudo apt-get install meson ninja-build gcc gawk gperf gettext python3-jinja2
 
-make all   # kernel + toolchain + systemd + openssh + busybox + image
+make all   # kernel + toolchain + systemd + openssh + busybox + e2fsprogs + image
 ```
 
 Individual targets: `make kernel`, `make toolchain`, `make systemd`, `make openssh`, `make busybox`, `make image`.
@@ -71,6 +76,7 @@ Individual targets: `make kernel`, `make toolchain`, `make systemd`, `make opens
 | v3.0 | systemd + BusyBox from source |
 | v4.0 | Full bootstrap: glibc + all libs from source |
 | **v4.1** | **OpenSSH 10.3 from source, auto-starts at boot** |
+| **v4.2** | **First-boot auto-expand, fresh SSH keys, forced password change** |
 
 ## License
 
