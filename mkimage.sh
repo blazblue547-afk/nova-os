@@ -5,11 +5,11 @@
 set -e
 
 NOVA_ROOT="/home/joe/nova-os"
-IMAGE="$NOVA_ROOT/nova-os-2.0-systemd.img"
+IMAGE="$NOVA_ROOT/nova-os-3.0-from-source.img"
 SIZE_MB=1536  # 1.5 GB
 TMP_MNT="/tmp/nova-os-mnt"
 
-echo "==> Nova OS Image Builder"
+echo "==> Nova OS Image Builder (from-source)"
 echo ""
 
 # Check kernel exists
@@ -74,8 +74,8 @@ echo "✓ Boot partition ready"
 
 # Copy rootfs
 echo "==> Copying root filesystem..."
-sudo cp -a "$NOVA_ROOT/rootfs/"* "$TMP_MNT/root/"
-echo "✓ Root filesystem ready (systemd $(sudo chroot "$TMP_MNT/root" systemd --version 2>/dev/null | head -1 | awk '{print $2}'))"
+sudo cp -a "$NOVA_ROOT/rootfs-custom/"* "$TMP_MNT/root/"
+echo "✓ Root filesystem ready (systemd 260 · BusyBox 1.36.1 · built from source)"
 
 # Unmount
 echo "==> Unmounting..."
