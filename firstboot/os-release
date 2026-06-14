@@ -1,0 +1,6 @@
+NAME="Nova OS"
+VERSION="4.2-firstboot"
+ID=nova-os
+PRETTY_NAME="Nova OS 4.2"
+VERSION_ID="4.2"
+HOME_URL="https://github.com/blazblue547-afk/nova-os"

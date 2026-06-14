@@ -1,0 +1,17 @@
+[Unit]
+Description=Nova OS First-Boot Setup
+Documentation=https://github.com/blazblue547-afk/nova-os
+After=local-fs.target
+Before=sshd.service network.target multi-user.target
+ConditionPathExists=!/etc/nova-firstboot-done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/nova-firstboot
+StandardOutput=journal+console
+StandardError=journal+console
+RemainAfterExit=yes
+TimeoutSec=300
+
+[Install]
+WantedBy=multi-user.target

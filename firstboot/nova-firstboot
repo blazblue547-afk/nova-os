@@ -1,0 +1,52 @@
+#!/bin/sh
+# Nova OS — First Boot Setup
+# Expands root partition, regenerates SSH keys, expires root password
+
+set -e
+
+FLAG=/etc/nova-firstboot-done
+if [ -f "$FLAG" ]; then
+    exit 0
+fi
+
+echo ""
+echo "  ╔══════════════════════════════════════════╗"
+echo "  ║     Nova OS — First Boot Setup           ║"
+echo "  ╚══════════════════════════════════════════╝"
+echo ""
+
+# ── 1. Expand root partition to fill SD card ──────────────────
+PART=/dev/mmcblk0p2
+DISK=/dev/mmcblk0
+
+echo "==> Expanding root partition to fill SD card..."
+printf "d\n2\nn\np\n2\n\n\nw\n" | fdisk "$DISK" > /dev/null 2>&1
+blockdev --rereadpt "$DISK" 2>/dev/null || true
+sleep 1
+
+# ── 2. Grow ext4 filesystem ───────────────────────────────────
+echo "==> Resizing root filesystem..."
+resize2fs "$PART"
+
+# ── 3. Regenerate SSH host keys ───────────────────────────────
+echo "==> Generating fresh SSH host keys..."
+rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
+
+# ── 4. Force root password change on first login ──────────────
+echo "==> Securing root account..."
+passwd -e root 2>/dev/null || true
+
+# ── 5. Mark first-boot complete ───────────────────────────────
+touch "$FLAG"
+sync
+
+echo ""
+echo "  ╔══════════════════════════════════════════╗"
+echo "  ║   First-boot setup complete.             ║"
+echo "  ║   Root password must be changed.         ║"
+echo "  ║   Rebooting in 5 seconds...              ║"
+echo "  ╚══════════════════════════════════════════╝"
+echo ""
+
+sleep 5
+reboot
