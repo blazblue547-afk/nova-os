@@ -70,6 +70,12 @@ if [ -n "$DTB" ]; then
 fi
 sudo cp "$NOVA_ROOT/boot/config.txt" "$TMP_MNT/boot/"
 sudo cp "$NOVA_ROOT/boot/cmdline.txt" "$TMP_MNT/boot/"
+
+# Copy Raspberry Pi firmware (required for Pi 5 boot)
+if [ -d "$NOVA_ROOT/firmware" ]; then
+    sudo cp "$NOVA_ROOT/firmware/"* "$TMP_MNT/boot/"
+    echo "✓ Pi firmware installed"
+fi
 echo "✓ Boot partition ready"
 
 # Copy rootfs
