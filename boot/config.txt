@@ -6,9 +6,7 @@ kernel=Image
 arm_64bit=1
 enable_uart=1
 dtparam=audio=on
-dtoverlay=vc4-kms-v3d
 gpu_mem=64
-max_framebuffers=2
 
 # Nova OS splash
 disable_splash=0
