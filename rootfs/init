@@ -1,8 +1,10 @@
-#!/bin/busybox sh
+#!/bin/sh
 #
 # Nova OS - init
-# Linux 7.0.12-nova-os
+# Linux 7.0.12-nova-os — "Burn bright, run light."
 #
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 echo ""
 echo "  ╔══════════════════════════════════════╗"
@@ -13,29 +15,34 @@ echo "  ╚═══════════════════════
 echo ""
 
 # Mount essential filesystems
-mount -t proc proc /proc
-mount -t sysfs sysfs /sys
-mount -t devtmpfs devtmpfs /dev
-mount -t tmpfs tmpfs /tmp
-mount -t tmpfs tmpfs /run
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+mount -t tmpfs none /tmp
+mount -t tmpfs none /run
 
 # Populate /dev
 mdev -s
 
+# Mount root writable
+mount -o remount,rw /
+
 # Set hostname
 hostname nova-os
 
-echo ":: Mounting root filesystem..."
-mount -o remount,rw /
-
-echo ":: Setting up loopback..."
+# Bring up loopback
 ifconfig lo 127.0.0.1 up
 
-echo ":: Starting syslogd..."
-syslogd -t
+# Start logging
+syslogd
 
 echo ":: Nova OS ready."
 echo ""
 
-# Spawn shell on tty1
-setsid cttyhack /bin/sh
+# Run the configured inittab if it exists
+if [ -f /etc/inittab ]; then
+    exec init
+fi
+
+# Fallback: spawn a shell
+exec cttyhack sh

@@ -2,3 +2,8 @@ build/
 *.img
 *.tar.xz
 *.tar.bz2
+rootfs/bin/
+rootfs/sbin/
+rootfs/lib/
+rootfs/dev/
+!rootfs/bin/.gitkeep
