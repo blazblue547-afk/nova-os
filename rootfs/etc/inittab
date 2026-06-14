@@ -1,0 +1,7 @@
+# Nova OS inittab
+::sysinit:/etc/init.d/rcS
+::sysinit:/bin/hostname -F /etc/hostname
+::respawn:/sbin/getty 38400 tty1
+::respawn:/sbin/getty 38400 ttyAMA0
+::ctrlaltdel:/sbin/reboot
+::shutdown:/bin/umount -a -r

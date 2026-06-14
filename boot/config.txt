@@ -1,0 +1,17 @@
+# Nova OS - Raspberry Pi 5 Boot Configuration
+# Linux 7.0.12-nova-os
+
+[all]
+kernel=Image
+arm_64bit=1
+enable_uart=1
+dtparam=audio=on
+dtoverlay=vc4-kms-v3d
+gpu_mem=64
+max_framebuffers=2
+
+# Nova OS splash
+disable_splash=0
+
+[pi5]
+kernel=Image

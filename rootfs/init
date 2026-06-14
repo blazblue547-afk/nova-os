@@ -1,0 +1,41 @@
+#!/bin/busybox sh
+#
+# Nova OS - init
+# Linux 7.0.12-nova-os
+#
+
+echo ""
+echo "  ╔══════════════════════════════════════╗"
+echo "  ║          N O V A   O S              ║"
+echo "  ║       kernel 7.0.12-nova-os         ║"
+echo "  ║   \"Burn bright, run light.\"      ║"
+echo "  ╚══════════════════════════════════════╝"
+echo ""
+
+# Mount essential filesystems
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+mount -t tmpfs tmpfs /tmp
+mount -t tmpfs tmpfs /run
+
+# Populate /dev
+mdev -s
+
+# Set hostname
+hostname nova-os
+
+echo ":: Mounting root filesystem..."
+mount -o remount,rw /
+
+echo ":: Setting up loopback..."
+ifconfig lo 127.0.0.1 up
+
+echo ":: Starting syslogd..."
+syslogd -t
+
+echo ":: Nova OS ready."
+echo ""
+
+# Spawn shell on tty1
+setsid cttyhack /bin/sh

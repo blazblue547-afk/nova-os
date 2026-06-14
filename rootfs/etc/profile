@@ -1,0 +1,15 @@
+#
+# Nova OS shell profile
+#
+
+# Set prompt
+export PS1='\e[1;36mnova-os\e[0m:\e[1;35m\w\e[0m# '
+
+# Aliases
+alias ls='ls --color=auto'
+alias ll='ls -la'
+alias nova='cat /etc/motd'
+
+# Welcome
+cat /etc/issue
+echo ""

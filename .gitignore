@@ -1,0 +1,4 @@
+build/
+*.img
+*.tar.xz
+*.tar.bz2
