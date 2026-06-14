@@ -31,6 +31,7 @@ resize2fs "$PART"
 # ── 3. Regenerate SSH host keys ───────────────────────────────
 echo "==> Generating fresh SSH host keys..."
 rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
+ssh-keygen -A
 
 # ── 4. Force root password change on first login ──────────────
 echo "==> Securing root account..."
