@@ -5,7 +5,7 @@
 set -e
 
 NOVA_ROOT="/home/joe/nova-os"
-IMAGE="$NOVA_ROOT/nova-os-1.0-starlight.img"
+IMAGE="$NOVA_ROOT/nova-os-2.0-systemd.img"
 SIZE_MB=1536  # 1.5 GB
 TMP_MNT="/tmp/nova-os-mnt"
 
@@ -75,8 +75,7 @@ echo "✓ Boot partition ready"
 # Copy rootfs
 echo "==> Copying root filesystem..."
 sudo cp -a "$NOVA_ROOT/rootfs/"* "$TMP_MNT/root/"
-sudo chmod 755 "$TMP_MNT/root/init"
-echo "✓ Root filesystem ready"
+echo "✓ Root filesystem ready (systemd $(sudo chroot "$TMP_MNT/root" systemd --version 2>/dev/null | head -1 | awk '{print $2}'))"
 
 # Unmount
 echo "==> Unmounting..."

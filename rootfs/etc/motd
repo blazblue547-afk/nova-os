@@ -1,17 +1,10 @@
 
-  ╔══════════════════════════════════════╗
-  ║          N O V A   O S              ║
-  ║       kernel 7.0.12-nova-os         ║
-  ║   \"Burn bright, run light.\"      ║
-  ╚══════════════════════════════════════╝
+  ╔══════════════════════════════════════════╗
+  ║           N O V A   O S                 ║
+  ║        kernel 7.0.12-nova-os            ║
+  ║     "Burn bright, run light."           ║
+  ╚══════════════════════════════════════════╝
+  
+  Powered by systemd · Debian Bookworm
+  GitHub: https://github.com/blazblue547-afk/nova-os
 
-Welcome to Nova OS — a lightweight, blazing fast Linux distribution
-built from the latest mainline kernel and busybox userspace.
-
-  • Kernel: Linux 7.0.12-nova-os
-  • Arch:   aarch64 (ARM64)
-  • Shell:  busybox ash
-  • Init:   custom (minimal)
-  • Target: Raspberry Pi 5
-
-Type 'help' for available commands.

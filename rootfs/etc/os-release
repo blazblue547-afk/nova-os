@@ -1,7 +1,1 @@
-NAME="Nova OS"
-VERSION="1.0 (Starlight)"
-ID=nova-os
-VERSION_ID=1.0
-PRETTY_NAME="Nova OS 1.0 Starlight"
-HOME_URL="https://github.com/blazblue547-afk/nova-os"
-KERNEL="Linux 7.0.12-nova-os"
+../usr/lib/os-release
