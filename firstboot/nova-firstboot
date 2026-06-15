@@ -15,53 +15,59 @@ echo "  ║     Nova OS — First Boot Setup           ║"
 echo "  ╚══════════════════════════════════════════╝"
 echo ""
 
-# ── 1. Expand root partition to fill storage ──────────────────
-echo "==> Expanding root partition to fill storage..."
-
-# Auto-detect root device from kernel cmdline
-ROOT_SPEC=$(cat /proc/cmdline | tr ' ' '\n' | grep '^root=' | cut -d= -f2-)
-case "$ROOT_SPEC" in
-    PARTUUID=*)
-        UUID="${ROOT_SPEC#PARTUUID=}"
-        ROOT_PART=$(blkid -U "$UUID" -o device 2>/dev/null)
-        ;;
-    UUID=*)
-        UUID="${ROOT_SPEC#UUID=}"
-        ROOT_PART=$(blkid -U "$UUID" -o device 2>/dev/null)
-        ;;
-    *)
-        ROOT_PART="$ROOT_SPEC"
-        ;;
-esac
-
-if [ -z "$ROOT_PART" ] || [ ! -b "$ROOT_PART" ]; then
-    echo "WARNING: Could not detect root device, skipping partition expansion."
-else
-    # Get parent disk by stripping partition number from end
-    DISK=$(echo "$ROOT_PART" | sed 's/[0-9]*$//')
-    PART_NUM=$(echo "$ROOT_PART" | sed 's/.*[^0-9]\([0-9]*\)$/\1/')
-
-    echo "   Root: $ROOT_PART -> Disk: $DISK (partition $PART_NUM)"
-
-    printf "d\n%s\nn\np\n%s\n\n\nw\n" "$PART_NUM" "$PART_NUM" | fdisk "$DISK" > /dev/null 2>&1 || true
-    blockdev --rereadpt "$DISK" 2>/dev/null || true
-    sleep 1
-
-    # ── 2. Grow ext4 filesystem ───────────────────────────────────
-    echo "==> Resizing root filesystem..."
-    resize2fs "$ROOT_PART" || true
+# Detect if running under QEMU (virtio block)
+IS_QEMU=0
+if [ -b /dev/vda ] || [ -b /dev/vda1 ] || [ -b /dev/vda2 ]; then
+    IS_QEMU=1
+    echo "==> QEMU virtual machine detected"
 fi
 
-# ── 3. Regenerate SSH host keys ───────────────────────────────
+# ── 1. Expand root partition to fill storage ──────────────────
+if [ "$IS_QEMU" -eq 1 ]; then
+    echo "==> Skipping partition expansion (QEMU virtio)"
+else
+    echo "==> Expanding root partition to fill storage..."
+
+    # Auto-detect root device from kernel cmdline
+    ROOT_SPEC=$(cat /proc/cmdline | tr ' ' '\n' | grep '^root=' | cut -d= -f2-)
+    case "$ROOT_SPEC" in
+        PARTUUID=*)
+            UUID="${ROOT_SPEC#PARTUUID=}"
+            ROOT_PART=$(blkid -U "$UUID" -o device 2>/dev/null)
+            ;;
+        UUID=*)
+            UUID="${ROOT_SPEC#UUID=}"
+            ROOT_PART=$(blkid -U "$UUID" -o device 2>/dev/null)
+            ;;
+        *)
+            ROOT_PART="$ROOT_SPEC"
+            ;;
+    esac
+
+    if [ -z "$ROOT_PART" ] || [ ! -b "$ROOT_PART" ]; then
+        echo "WARNING: Could not detect root device, skipping partition expansion."
+    else
+        DISK=$(echo "$ROOT_PART" | sed 's/[0-9]*$//')
+        PART_NUM=$(echo "$ROOT_PART" | sed 's/.*[^0-9]\([0-9]*\)$/\1/')
+        echo "   Root: $ROOT_PART -> Disk: $DISK (partition $PART_NUM)"
+        printf "d\n%s\nn\np\n%s\n\n\nw\n" "$PART_NUM" "$PART_NUM" | fdisk "$DISK" > /dev/null 2>&1 || true
+        blockdev --rereadpt "$DISK" 2>/dev/null || true
+        sleep 1
+        echo "==> Resizing root filesystem..."
+        resize2fs "$ROOT_PART" || true
+    fi
+fi
+
+# ── 2. Regenerate SSH host keys ───────────────────────────────
 echo "==> Generating fresh SSH host keys..."
 rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 ssh-keygen -A
 
-# ── 4. Force root password change on first login ──────────────
+# ── 3. Force root password change on first login ──────────────
 echo "==> Securing root account..."
 passwd -e root 2>/dev/null || true
 
-# ── 5. Mark first-boot complete ───────────────────────────────
+# ── 4. Mark first-boot complete ───────────────────────────────
 touch "$FLAG"
 sync
 
@@ -69,9 +75,15 @@ echo ""
 echo "  ╔══════════════════════════════════════════╗"
 echo "  ║   First-boot setup complete.             ║"
 echo "  ║   Root password must be changed.         ║"
-echo "  ║   Rebooting in 5 seconds...              ║"
+if [ "$IS_QEMU" -eq 1 ]; then
+    echo "  ║   QEMU mode — no reboot.                ║"
+else
+    echo "  ║   Rebooting in 5 seconds...              ║"
+fi
 echo "  ╚══════════════════════════════════════════╝"
 echo ""
 
-sleep 5
-reboot
+if [ "$IS_QEMU" -eq 0 ]; then
+    sleep 5
+    /sbin/reboot
+fi
