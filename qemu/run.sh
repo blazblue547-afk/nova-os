@@ -70,7 +70,7 @@ exec qemu-system-aarch64 \
     -m "$MEM" \
     \
     -kernel "$KERNEL" \
-    -append "console=ttyAMA0 root=/dev/vda2 rootwait rw quiet loglevel=3" \
+    -append "console=ttyAMA0 root=/dev/vda2 rootwait rw quiet loglevel=5" \
     \
     -drive file="$IMAGE",format=raw,if=virtio \
     \
